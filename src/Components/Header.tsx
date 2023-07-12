@@ -1,16 +1,21 @@
-import { motion, useAnimation } from 'framer-motion';
-import { useState } from 'react';
+import {
+  motion,
+  useAnimation,
+  useScroll,
+  useMotionValueEvent,
+} from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { styled } from 'styled-components';
 
-const Nav = styled.div`
+const Nav = styled(motion.nav)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: fixed;
   width: 100%;
   top: 0;
-  background-color: black;
+  background-color: 0;
   padding: 20px 60px;
   font-size: 14px;
 `;
@@ -46,6 +51,8 @@ const Item = styled.li`
   flex-direction: column;
   &:hover {
     color: ${(props) => props.theme.white.lighter};
+    font-weight: 400;
+    transition: 0.4;
   }
 `;
 
@@ -87,20 +94,32 @@ const Input = styled(motion.input)`
   transform-origin: right center;
   position: absolute;
   right: 0px;
-  padding: 8px 10px;
+  padding: 7px 10px;
   padding-left: 40px;
   z-index: -1;
   color: white;
   font-size: 16px;
-  background-color: transparent;
+  background-color: rgba(0, 0, 0, 1);
   border: 1px solid ${(props) => props.theme.white.lighter};
+  outline: none;
 `;
+
+const navVariants = {
+  top: {
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+  },
+  scroll: {
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+  },
+};
 
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useRouteMatch('/');
   const tvMatch = useRouteMatch('/tv');
   const inputAnimation = useAnimation();
+  const navAnimation = useAnimation();
+  const { scrollY } = useScroll();
   const toggleSearch = () => {
     if (searchOpen) {
       inputAnimation.start({
@@ -113,8 +132,17 @@ function Header() {
     }
     setSearchOpen((prev) => !prev);
   };
+  useEffect(() => {
+    scrollY.onChange(() => {
+      if (scrollY.get() > 80) {
+        navAnimation.start('scroll');
+      } else {
+        navAnimation.start('top');
+      }
+    });
+  }, [scrollY, navAnimation]);
   return (
-    <Nav>
+    <Nav variants={navVariants} animate={navAnimation} initial={'top'}>
       <Col>
         <Link to='/'>
           <Logo
