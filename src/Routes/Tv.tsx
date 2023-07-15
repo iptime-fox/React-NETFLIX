@@ -279,7 +279,7 @@ const BigBtn = styled.button`
 
 function Tv() {
   const history = useHistory();
-  const bigMovieMatch = useRouteMatch<{ movieId: string }>('/movies/:movieId');
+  const bigMovieMatch = useRouteMatch<{ movieId: string }>('/tv/:movieId');
   const { scrollY } = useScroll();
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ['movies', 'nowPlaying'],
@@ -291,16 +291,19 @@ function Tv() {
     if (data) {
       if (leaving) return;
       toggleLeaving();
-      const totalMovies = data.results.length - 1;
-      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      const totalTv = data.results.length - 1;
+      const maxIndex = Math.floor(totalTv / offset) - 1;
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
-  const onBoxClicked = (movieId: number) => {
-    history.push(`/tv/${movieId}`);
+  const onBoxClicked = (tvId: number) => {
+    history.push(`/tv/${tvId}`);
   };
-  const onOverlayClick = () => history.push('/');
+  const moreInfoClicked = (tvId: number) => {
+    history.push(`/tv/${tvId}`);
+  };
+  const onOverlayClick = () => history.push('/tv');
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
     data?.results.find((tv) => tv.id === +bigMovieMatch.params.movieId);
@@ -318,7 +321,8 @@ function Tv() {
                 <FontAwesomeIcon icon={faPlay} style={{ fontSize: '20px' }} />
                 재생
               </Play>
-              <MoreInfo>
+              <MoreInfo
+                onClick={() => moreInfoClicked(Number(data?.results[0].id))}>
                 <FontAwesomeIcon
                   icon={faInfoCircle}
                   style={{ fontSize: '20px' }}
@@ -383,8 +387,11 @@ function Tv() {
                         }}
                       />
                       <BigTitleWrapper>
-                        <BigTitle>{clickedMovie.title}</BigTitle>{' '}
-                        <SmallTitle>{clickedMovie.original_title}</SmallTitle>
+                        <BigTitle>{clickedMovie.name}</BigTitle>{' '}
+                        <SmallTitle>
+                          {clickedMovie.original_name} |{' '}
+                          {clickedMovie.first_air_date.slice(0, 4)}{' '}
+                        </SmallTitle>
                         <Play style={{ margin: '10px 40px' }}>
                           <FontAwesomeIcon
                             icon={faPlay}
@@ -393,9 +400,18 @@ function Tv() {
                           재생
                         </Play>
                         <SmallTitle>
-                          {clickedMovie.release_date.slice(0, 4)} <br />
-                          ⭐️ {clickedMovie.vote_average} (
-                          {clickedMovie.vote_count})
+                          {[1, 2, 3, 4, 5].map((score) =>
+                            score <=
+                            Math.round(clickedMovie.vote_average / 2) ? (
+                              <span
+                                style={{ color: '#FEE501', fontSize: '20px' }}>
+                                ★
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: '20px' }}>★</span>
+                            )
+                          )}{' '}
+                          {clickedMovie.vote_average}
                         </SmallTitle>
                       </BigTitleWrapper>
 

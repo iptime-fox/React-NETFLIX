@@ -167,14 +167,19 @@ const SliderTitle = styled.p`
 `;
 
 const rowVariants = {
-  hidden: {
-    x: window.outerWidth + 5,
+  hidden: (right: number) => {
+    return {
+      x: right === 1 ? window.innerWidth + 5 : -window.innerWidth - 5,
+    };
   },
   visible: {
     x: 0,
+    y: 0,
   },
-  exit: {
-    x: -window.outerWidth - 5,
+  exit: (right: number) => {
+    return {
+      x: right === 1 ? -window.innerWidth - 5 : window.innerWidth + 5,
+    };
   },
 };
 
@@ -232,7 +237,7 @@ const BigTitleWrapper = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  top: -160px;
+  top: -170px;
 `;
 
 const BigTitle = styled.h3`
@@ -286,18 +291,30 @@ function Home() {
     getMovies
   );
   const [index, setIndex] = useState(0);
+  const [isRight, setIsRight] = useState(1);
   const [leaving, setLeaving] = useState(false);
-  const incraseIndex = () => {
+  const toggleLeaving = () => setLeaving((prev) => !prev);
+  const incraseIndex = (right: number) => {
     if (data) {
       if (leaving) return;
       toggleLeaving();
-      const totalMovies = data.results.length - 1;
-      const maxIndex = Math.floor(totalMovies / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setIsRight(right);
+      const totalMovies = data.results.length - 2;
+      const maxIndex =
+        totalMovies % offset === 0
+          ? Math.floor(totalMovies / offset) - 1
+          : Math.floor(totalMovies / offset);
+
+      right === 1
+        ? setIndex((prev) => (prev >= maxIndex ? 0 : prev + 1))
+        : setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
   };
-  const toggleLeaving = () => setLeaving((prev) => !prev);
+
   const onBoxClicked = (movieId: number) => {
+    history.push(`/movies/${movieId}`);
+  };
+  const moreInfoClicked = (movieId: number) => {
     history.push(`/movies/${movieId}`);
   };
   const onOverlayClick = () => history.push('/');
@@ -318,7 +335,8 @@ function Home() {
                 <FontAwesomeIcon icon={faPlay} style={{ fontSize: '20px' }} />
                 재생
               </Play>
-              <MoreInfo>
+              <MoreInfo
+                onClick={() => moreInfoClicked(Number(data?.results[0].id))}>
                 <FontAwesomeIcon
                   icon={faInfoCircle}
                   style={{ fontSize: '20px' }}
@@ -329,12 +347,16 @@ function Home() {
           </Banner>
           <Slider>
             <SliderTitle>지금 상영하는 영화</SliderTitle>
-            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+            <AnimatePresence
+              custom={isRight}
+              initial={false}
+              onExitComplete={toggleLeaving}>
               <Row
                 variants={rowVariants}
                 initial='hidden'
                 animate='visible'
                 exit='exit'
+                custom={isRight}
                 transition={{ type: 'tween', duration: 1 }}
                 key={index}>
                 {data?.results
@@ -353,10 +375,10 @@ function Home() {
                       <Logo src='/img/Netflix_N_logo.svg.png' />
                     </Box>
                   ))}
-                <ArrowBox_L onClick={incraseIndex}>
+                <ArrowBox_L onClick={() => incraseIndex(-1)}>
                   <FontAwesomeIcon icon={faChevronLeft} />
                 </ArrowBox_L>
-                <ArrowBox_R onClick={incraseIndex}>
+                <ArrowBox_R onClick={() => incraseIndex(+1)}>
                   <FontAwesomeIcon icon={faChevronRight} />
                 </ArrowBox_R>
               </Row>
@@ -384,7 +406,10 @@ function Home() {
                       />
                       <BigTitleWrapper>
                         <BigTitle>{clickedMovie.title}</BigTitle>{' '}
-                        <SmallTitle>{clickedMovie.original_title}</SmallTitle>
+                        <SmallTitle>
+                          {clickedMovie.original_title} |{' '}
+                          {clickedMovie.release_date.slice(0, 4)}{' '}
+                        </SmallTitle>
                         <Play style={{ margin: '10px 40px' }}>
                           <FontAwesomeIcon
                             icon={faPlay}
@@ -393,9 +418,18 @@ function Home() {
                           재생
                         </Play>
                         <SmallTitle>
-                          {clickedMovie.release_date.slice(0, 4)} <br />
-                          ⭐️ {clickedMovie.vote_average} (
-                          {clickedMovie.vote_count})
+                          {[1, 2, 3, 4, 5].map((score) =>
+                            score <=
+                            Math.round(clickedMovie.vote_average / 2) ? (
+                              <span
+                                style={{ color: '#FEE501', fontSize: '20px' }}>
+                                ★
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: '20px' }}>★</span>
+                            )
+                          )}{' '}
+                          {clickedMovie.vote_average}
                         </SmallTitle>
                       </BigTitleWrapper>
 

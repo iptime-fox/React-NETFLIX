@@ -1,10 +1,10 @@
 const API_KEY = '4ddf49e73410d99796b5b864968477b4';
 const BASE_PATH = 'https://api.themoviedb.org/3';
 
-export interface IGenre {
-  id: number;
-  name: string;
-}
+// export interface IGenre {
+//   id: number;
+//   name: string;
+// }
 
 interface IMovie {
   id: number;
@@ -14,11 +14,18 @@ interface IMovie {
   title: string;
   overview: string;
   original_title: string;
+  original_name: string;
+  first_air_date: string;
   release_date: string;
   vote_average: number;
   vote_count: number;
   runtime: number;
-  genres: IGenre[];
+  genres: [
+    {
+      id: number;
+      name: string;
+    }
+  ];
 }
 
 export interface IGetMoviesResult {
