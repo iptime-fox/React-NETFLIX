@@ -16,7 +16,12 @@ const BASE_PATH = 'https://api.themoviedb.org/3';
 
 const Wrapper = styled.div`
   background-color: black;
-  margin: 6rem auto;
+  margin: 4rem auto;
+`;
+
+const SearchKey = styled.p`
+  padding: 3rem 4rem 1.5rem;
+  font-weight: 400;
 `;
 
 const Loader = styled.div`
@@ -28,6 +33,7 @@ const Loader = styled.div`
 
 const SearchList = styled(motion.div)`
   padding: 3rem;
+  padding-top: 0;
   display: grid;
   gap: 10px;
   grid-template-columns: repeat(5, 1fr);
@@ -136,6 +142,7 @@ function Search() {
         <Loader>Loading...</Loader>
       ) : (
         <>
+          <SearchKey>' {keyword} ' (으)로 검색한 결과입니다.</SearchKey>
           <SearchList>
             {data?.results.map((movie) => (
               <Box
