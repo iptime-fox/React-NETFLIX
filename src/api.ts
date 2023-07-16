@@ -1,5 +1,5 @@
-const API_KEY = '4ddf49e73410d99796b5b864968477b4';
-const BASE_PATH = 'https://api.themoviedb.org/3';
+export const API_KEY = '4ddf49e73410d99796b5b864968477b4';
+export const BASE_PATH = 'https://api.themoviedb.org/3';
 
 // export interface IGenre {
 //   id: number;
@@ -8,6 +8,7 @@ const BASE_PATH = 'https://api.themoviedb.org/3';
 
 interface IMovie {
   id: number;
+  media_type: string;
   name: string;
   backdrop_path: string;
   poster_path: string;
@@ -49,4 +50,10 @@ export function getTv() {
   return fetch(`${BASE_PATH}/tv/top_rated?api_key=${API_KEY}&language=ko`).then(
     (response) => response.json()
   );
+}
+
+export function similarMovies() {
+  return fetch(
+    `${BASE_PATH}/movie/{movie_id}/similar?api_key=${API_KEY}&language=ko`
+  ).then((response) => response.json());
 }

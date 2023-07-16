@@ -11,7 +11,10 @@ import {
   faChevronRight,
   faInfoCircle,
   faPlay,
+  faPlus,
+  faThumbsUp,
 } from '@fortawesome/free-solid-svg-icons';
+import SimilarTv from './SimilarTv';
 
 const Wrapper = styled.div`
   background: black;
@@ -78,6 +81,7 @@ const Play = styled.div`
   font-weight: 400;
   column-gap: 0.5rem;
   align-items: center;
+  transition: 0.4s;
   &:hover {
     background-color: rgba(188, 188, 188, 0.7);
     color: #fff;
@@ -124,7 +128,7 @@ const ArrowBox_R = styled(ArrowBtn)`
 
 const Slider = styled.div`
   position: relative;
-  top: -100px;
+  top: -170px;
   margin: 0px 60px;
 
   &:hover ${ArrowBtn} {
@@ -212,7 +216,7 @@ const offset = 6;
 const BigMovie = styled(motion.div)`
   position: absolute;
   width: 60vw;
-  height: 90vh;
+  height: auto;
   background-color: black;
   left: 0;
   right: 0;
@@ -250,14 +254,34 @@ const SmallTitle = styled.h4`
   font-weight: 600;
 `;
 
+const BigBtnWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+`;
+
+const BigMoreBtn = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(109, 109, 110, 0.7);
+  border-radius: 20px;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 35px;
+  margin-right: 10px;
+  color: #ffffffd5;
+  transition: 0.4s;
+  &:hover {
+    border: 2px solid #ffffffd5;
+  }
+`;
+
 const BigOverview = styled.p`
   color: ${(props) => props.theme.white.lighter};
-  padding: 40px;
-  position: absolute;
-  top: 80%;
-  transform: translateY(-80%);
-  right: 0;
-  width: 70%;
+  padding: 0 40px;
+  width: 90%;
 `;
 
 const BigBtn = styled.button`
@@ -314,7 +338,7 @@ function Tv() {
       ) : (
         <>
           <Banner bgPhoto={makeImagePath(data?.results[0].backdrop_path || '')}>
-            <Title>{data?.results[0].name}</Title>
+            <Title>{data?.results[0].original_name}</Title>
             <Overview>{data?.results[0].overview}</Overview>
             <BannerBtnWrapper>
               <Play>
@@ -392,13 +416,31 @@ function Tv() {
                           {clickedMovie.original_name} |{' '}
                           {clickedMovie.first_air_date.slice(0, 4)}{' '}
                         </SmallTitle>
-                        <Play style={{ margin: '10px 40px' }}>
-                          <FontAwesomeIcon
-                            icon={faPlay}
-                            style={{ fontSize: '20px' }}
-                          />
-                          재생
-                        </Play>
+                        <BigBtnWrapper>
+                          <Play
+                            style={{
+                              margin: '10px 40px',
+                              marginRight: '10px',
+                            }}>
+                            <FontAwesomeIcon
+                              icon={faPlay}
+                              style={{ fontSize: '20px' }}
+                            />
+                            재생
+                          </Play>
+                          <BigMoreBtn>
+                            <FontAwesomeIcon
+                              icon={faPlus}
+                              style={{ fontSize: '20px' }}
+                            />
+                          </BigMoreBtn>
+                          <BigMoreBtn>
+                            <FontAwesomeIcon
+                              icon={faThumbsUp}
+                              style={{ fontSize: '16px' }}
+                            />
+                          </BigMoreBtn>
+                        </BigBtnWrapper>
                         <SmallTitle>
                           {[1, 2, 3, 4, 5].map((score) =>
                             score <=
@@ -413,9 +455,10 @@ function Tv() {
                           )}{' '}
                           {clickedMovie.vote_average}
                         </SmallTitle>
+                        <BigOverview>{clickedMovie.overview}</BigOverview>
+                        <SimilarTv />
                       </BigTitleWrapper>
 
-                      <BigOverview>{clickedMovie.overview}</BigOverview>
                       <BigBtn onClick={onOverlayClick}>✕</BigBtn>
                     </>
                   )}

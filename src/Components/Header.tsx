@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import { styled } from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell } from '@fortawesome/free-solid-svg-icons';
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -50,21 +52,26 @@ const Item = styled.li`
   display: flex;
   justify-content: center;
   flex-direction: column;
+  transition: 0.4;
   &:hover {
     color: ${(props) => props.theme.white.lighter};
     font-weight: 400;
-    transition: 0.4;
   }
 `;
 
 const Search = styled.form`
-  color: white;
+  color: ${(props) => props.theme.white.darker};
   display: flex;
   align-items: center;
   svg {
     height: 25px;
   }
   position: relative;
+  transition: 0.4;
+  &:hover {
+    color: ${(props) => props.theme.white.lighter};
+    font-weight: 400;
+  }
 `;
 
 const Line = styled(motion.span)`
@@ -205,6 +212,15 @@ function Header() {
             placeholder='제목, 사람, 장르'
           />
         </Search>
+        <FontAwesomeIcon
+          icon={faBell}
+          style={{
+            marginLeft: '20px',
+            fontSize: '20px',
+            fill: 'none',
+            color: '#e5e5e5',
+          }}
+        />
       </Col>
     </Nav>
   );

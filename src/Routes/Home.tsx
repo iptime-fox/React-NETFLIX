@@ -1,17 +1,21 @@
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { motion, AnimatePresence, useScroll } from 'framer-motion';
-import { getMovies, IGetMoviesResult } from '../api';
+import { BASE_PATH, getMovies, IGetMoviesResult, API_KEY } from '../api';
 import { makeImagePath } from '../utils';
 import { useState } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
   faChevronRight,
+  faChevronDown,
   faInfoCircle,
   faPlay,
+  faPlus,
+  faThumbsUp,
 } from '@fortawesome/free-solid-svg-icons';
+import SimilarMovie from './SimilarMovie';
 
 const Wrapper = styled.div`
   background: black;
@@ -78,6 +82,7 @@ const Play = styled.div`
   font-weight: 400;
   column-gap: 0.5rem;
   align-items: center;
+  transition: 0.4s;
   &:hover {
     background-color: rgba(188, 188, 188, 0.7);
     color: #fff;
@@ -124,7 +129,7 @@ const ArrowBox_R = styled(ArrowBtn)`
 
 const Slider = styled.div`
   position: relative;
-  top: -100px;
+  top: -170px;
   margin: 0px 60px;
 
   &:hover ${ArrowBtn} {
@@ -216,14 +221,17 @@ const offset = 6;
 
 const BigMovie = styled(motion.div)`
   position: absolute;
-  width: 60vw;
-  height: 90vh;
+  width: 50vw;
+  height: auto;
   background-color: black;
   left: 0;
   right: 0;
   margin: 0 auto;
   border-radius: 5px;
   overflow: hidden;
+  @media screen and (max-width: 1400px) {
+    width: 60vw;
+  }
 `;
 
 const BigCover = styled.div`
@@ -255,14 +263,35 @@ const SmallTitle = styled.h4`
   font-weight: 600;
 `;
 
+const BigBtnWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+`;
+
+const BigMoreBtn = styled.button`
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(109, 109, 110, 0.7);
+  background-color: transparent;
+  border-radius: 20px;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 35px;
+  margin-right: 10px;
+  color: #ffffffd5;
+  transition: 0.4s;
+  &:hover {
+    border: 2px solid #ffffffd5;
+  }
+`;
+
 const BigOverview = styled.p`
   color: ${(props) => props.theme.white.lighter};
-  padding: 40px;
-  position: absolute;
-  top: 80%;
-  transform: translateY(-80%);
-  right: 0;
-  width: 70%;
+  padding: 0 40px;
+  width: 90%;
 `;
 
 const BigBtn = styled.button`
@@ -276,7 +305,7 @@ const BigBtn = styled.button`
   justify-content: center;
   align-items: center;
   padding: 0.5rem 0.5rem;
-  font-size: 18px;
+  font-size: 16px;
   position: absolute;
   top: 10px;
   right: 10px;
@@ -321,6 +350,7 @@ function Home() {
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
     data?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
+
   return (
     <Wrapper>
       {isLoading ? (
@@ -328,7 +358,7 @@ function Home() {
       ) : (
         <>
           <Banner bgPhoto={makeImagePath(data?.results[0].backdrop_path || '')}>
-            <Title>{data?.results[0].title}</Title>
+            <Title>{data?.results[0].original_title}</Title>
             <Overview>{data?.results[0].overview}</Overview>
             <BannerBtnWrapper>
               <Play>
@@ -373,6 +403,23 @@ function Home() {
                       transition={{ type: 'tween' }}
                       bgPhoto={makeImagePath(movie.backdrop_path, 'w500')}>
                       <Logo src='/img/Netflix_N_logo.svg.png' />
+                      {/* <BigMoreBtn
+                        style={{
+                          bottom: '10px',
+                          marginLeft: '10%',
+                          width: '25px',
+                          height: '25px',
+                          borderRadius: '12.5px',
+                          position: 'absolute',
+                          border: '2px solid #ffffffd5',
+                        }}>
+                        <FontAwesomeIcon
+                          icon={faChevronDown}
+                          style={{
+                            fontSize: '14px',
+                          }}
+                        />
+                      </BigMoreBtn> */}
                     </Box>
                   ))}
                 <ArrowBox_L onClick={() => incraseIndex(-1)}>
@@ -410,13 +457,31 @@ function Home() {
                           {clickedMovie.original_title} |{' '}
                           {clickedMovie.release_date.slice(0, 4)}{' '}
                         </SmallTitle>
-                        <Play style={{ margin: '10px 40px' }}>
-                          <FontAwesomeIcon
-                            icon={faPlay}
-                            style={{ fontSize: '20px' }}
-                          />
-                          재생
-                        </Play>
+                        <BigBtnWrapper>
+                          <Play
+                            style={{
+                              margin: '10px 40px',
+                              marginRight: '10px',
+                            }}>
+                            <FontAwesomeIcon
+                              icon={faPlay}
+                              style={{ fontSize: '20px' }}
+                            />
+                            재생
+                          </Play>
+                          <BigMoreBtn>
+                            <FontAwesomeIcon
+                              icon={faPlus}
+                              style={{ fontSize: '20px' }}
+                            />
+                          </BigMoreBtn>
+                          <BigMoreBtn>
+                            <FontAwesomeIcon
+                              icon={faThumbsUp}
+                              style={{ fontSize: '16px' }}
+                            />
+                          </BigMoreBtn>
+                        </BigBtnWrapper>
                         <SmallTitle>
                           {[1, 2, 3, 4, 5].map((score) =>
                             score <=
@@ -431,9 +496,10 @@ function Home() {
                           )}{' '}
                           {clickedMovie.vote_average}
                         </SmallTitle>
+                        <BigOverview>{clickedMovie.overview}</BigOverview>
+                        <SimilarMovie />
                       </BigTitleWrapper>
 
-                      <BigOverview>{clickedMovie.overview}</BigOverview>
                       <BigBtn onClick={onOverlayClick}>✕</BigBtn>
                     </>
                   )}
