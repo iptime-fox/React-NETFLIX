@@ -14,6 +14,8 @@
     "framer-motion": "^10.12.18",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
+    "react-helmet-async": "^1.3.0",
     "react-hook-form": "^7.45.1",
     "react-query": "^3.39.3",
     "react-router-dom": "^5.3.4",
@@ -52,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-helmet": "^6.1.6",
     "@types/react-router-dom": "^5.3.3",
     "gh-pages": "^5.0.0"
   },

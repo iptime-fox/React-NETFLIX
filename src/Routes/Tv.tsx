@@ -11,6 +11,7 @@ import TopTv from '../Components/TvSlide/TopTv';
 import AiringTv from '../Components/TvSlide/AiringTv';
 import PopTv from '../Components/TvSlide/PopularTv';
 import TvLatest from '../Components/TvSlide/LatestTv';
+import { Helmet } from 'react-helmet';
 
 const Wrapper = styled.div`
   background: black;
@@ -102,13 +103,22 @@ const MoreInfo = styled.div`
 `;
 
 const offset = 6;
-
 const SliderWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 200px;
+  row-gap: 230px;
   position: relative;
   top: -170px;
+  @media screen and (max-width: 1400px) {
+    row-gap: 200px;
+  }
+  @media screen and (max-width: 1200px) {
+    row-gap: 160px;
+  }
+  @media screen and (max-width: 980px) {
+    row-gap: 120px;
+  }
+  margin-bottom: 6rem;
 `;
 
 function Tv() {
@@ -146,6 +156,9 @@ function Tv() {
 
   return (
     <Wrapper>
+      <Helmet>
+        <title>Netflix</title>
+      </Helmet>
       {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (

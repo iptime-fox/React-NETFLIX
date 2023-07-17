@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPlus, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence, useScroll } from 'framer-motion';
 import { makeImagePath } from '../utils';
+import { Helmet } from 'react-helmet';
 
 const API_KEY = '4ddf49e73410d99796b5b864968477b4';
 const BASE_PATH = 'https://api.themoviedb.org/3';
@@ -265,6 +266,9 @@ function Search() {
     data?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
   return (
     <Wrapper>
+      <Helmet>
+        <title>Netflix</title>
+      </Helmet>
       {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (

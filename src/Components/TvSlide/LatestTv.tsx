@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { motion, AnimatePresence, useScroll } from 'framer-motion';
+import { AnimatePresence, useScroll } from 'framer-motion';
 import { LatestTv, IGetMoviesResult } from '../../api';
 import { makeImagePath } from '../../utils';
 import { useState } from 'react';
@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
   faChevronRight,
-  faInfoCircle,
   faPlay,
   faPlus,
   faThumbsUp,
@@ -25,7 +24,6 @@ import {
   rowVariants,
   SliderTitle,
   BoxVariants,
-  Logo,
   Overlay,
   BigMovie,
   BigCover,

@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { motion, AnimatePresence, useScroll } from 'framer-motion';
+import { AnimatePresence, useScroll } from 'framer-motion';
 import { PopularMovie, IGetMoviesResult } from '../../api';
 import { makeImagePath } from '../../utils';
 import { useState } from 'react';
@@ -25,7 +25,6 @@ import {
   rowVariants,
   SliderTitle,
   BoxVariants,
-  Logo,
   Overlay,
   offset,
   BigMovie,

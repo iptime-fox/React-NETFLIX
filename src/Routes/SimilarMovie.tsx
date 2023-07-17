@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { BASE_PATH, getMovies, IGetMoviesResult, API_KEY } from '../api';
+import { BASE_PATH, IGetMoviesResult, API_KEY } from '../api';
 import { useRouteMatch } from 'react-router-dom';
 import { makeImagePath } from '../utils';
 import { motion } from 'framer-motion';

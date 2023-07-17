@@ -76,6 +76,12 @@ export const Box = styled(motion.div)<{ bgPhoto: string }>`
   @media screen and (max-width: 1400px) {
     height: 150px;
   }
+  @media screen and (max-width: 1200px) {
+    height: 120px;
+  }
+  @media screen and (max-width: 980px) {
+    height: 100px;
+  }
 `;
 
 export const SliderTitle = styled.p`
@@ -136,7 +142,7 @@ export const Overlay = styled(motion.div)`
 
 export const BigMovie = styled(motion.div)`
   position: fixed;
-  width: 60vw;
+  width: 50vw;
   height: auto;
   background-color: black;
   left: 0;
@@ -147,6 +153,12 @@ export const BigMovie = styled(motion.div)`
   z-index: 100;
   @media screen and (max-width: 1400px) {
     width: 60vw;
+  }
+  @media screen and (max-width: 1400px) {
+    width: 70vw;
+  }
+  @media screen and (max-width: 1200px) {
+    width: 80vw;
   }
 `;
 export const BigCover = styled.div`

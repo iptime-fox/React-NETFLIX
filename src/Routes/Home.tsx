@@ -1,22 +1,13 @@
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { motion, AnimatePresence, useScroll } from 'framer-motion';
-import { BASE_PATH, getMovies, IGetMoviesResult, API_KEY } from '../api';
+import { useScroll } from 'framer-motion';
+import { getMovies, IGetMoviesResult } from '../api';
 import { makeImagePath } from '../utils';
 import { useState } from 'react';
-import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faChevronLeft,
-  faChevronRight,
-  faChevronDown,
-  faInfoCircle,
-  faPlay,
-  faPlus,
-  faThumbsUp,
-} from '@fortawesome/free-solid-svg-icons';
-import SimilarMovie from './SimilarMovie';
-import LatestM from '../Components/MovieSlide/PopularMovies';
+import { faInfoCircle, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { Helmet } from 'react-helmet';
 
 import PopularMV from '../Components/MovieSlide/PopularMovies';
 import TopMV from '../Components/MovieSlide/TopMovies';
@@ -116,15 +107,24 @@ const offset = 6;
 const SliderWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 200px;
+  row-gap: 230px;
   position: relative;
   top: -170px;
+  @media screen and (max-width: 1400px) {
+    row-gap: 200px;
+  }
+  @media screen and (max-width: 1200px) {
+    row-gap: 160px;
+  }
+  @media screen and (max-width: 980px) {
+    row-gap: 120px;
+  }
+  margin-bottom: 6rem;
 `;
 
 function Home() {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>('/movies/:movieId');
-  const { scrollY } = useScroll();
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ['movies', 'nowPlaying'],
     getMovies
@@ -150,21 +150,16 @@ function Home() {
     }
   };
 
-  const onBoxClicked = (movieId: number) => {
-    history.push(`/movies/${movieId}`);
-    window.location.reload();
-  };
   const moreInfoClicked = (movieId: number) => {
     history.push(`/movies/${movieId}`);
     window.location.reload();
   };
-  const onOverlayClick = () => history.push('/');
-  const clickedMovie =
-    bigMovieMatch?.params.movieId &&
-    data?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
 
   return (
     <Wrapper>
+      <Helmet>
+        <title>Netflix</title>
+      </Helmet>
       {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (

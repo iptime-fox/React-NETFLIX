@@ -25,7 +25,6 @@ import {
   rowVariants,
   SliderTitle,
   BoxVariants,
-  Logo,
   Overlay,
   BigMovie,
   BigCover,
