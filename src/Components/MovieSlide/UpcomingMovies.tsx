@@ -105,9 +105,7 @@ function UpcomingMV() {
                   whileHover='hover'
                   onClick={() => onBoxClicked(movie.id)}
                   transition={{ type: 'tween' }}
-                  bgPhoto={makeImagePath(movie.backdrop_path, 'w500')}>
-                  <Logo src='/img/Netflix_N_logo.svg.png' />
-                </Box>
+                  bgPhoto={makeImagePath(movie.backdrop_path, 'w500')}></Box>
               ))}
             <ArrowBox_L onClick={() => incraseIndex(-1)}>
               <FontAwesomeIcon icon={faChevronLeft} />

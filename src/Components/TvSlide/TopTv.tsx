@@ -123,9 +123,7 @@ function TopTv() {
                   whileHover='hover'
                   onClick={() => onBoxClicked(tv.id)}
                   transition={{ type: 'tween' }}
-                  bgPhoto={makeImagePath(tv.backdrop_path, 'w500')}>
-                  <Logo src='/img/Netflix_N_logo.svg.png' />
-                </Box>
+                  bgPhoto={makeImagePath(tv.backdrop_path, 'w500')}></Box>
               ))}
             <ArrowBox_L onClick={() => incraseIndex(-1)}>
               <FontAwesomeIcon icon={faChevronLeft} />
