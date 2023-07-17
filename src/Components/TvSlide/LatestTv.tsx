@@ -63,10 +63,7 @@ function TvLatest() {
   const history = useHistory();
   const { scrollY } = useScroll();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>('/tv/:movieId');
-  const { data, isLoading } = useQuery<IGetMoviesResult>(
-    ['movies', 'Latest'],
-    LatestTv
-  );
+  const { data } = useQuery<IGetMoviesResult>(['movies', 'Latest'], LatestTv);
   const [index, setIndex] = useState(0);
   const [isRight, setIsRight] = useState(1);
   const [leaving, setLeaving] = useState(false);
@@ -77,7 +74,7 @@ function TvLatest() {
       if (leaving) return;
       toggleLeaving();
       setIsRight(right);
-      const totalTv = data.results.length - 2;
+      const totalTv = data.results.length - 1;
       const maxIndex =
         totalTv % offset === 0
           ? Math.floor(totalTv / offset) - 1
@@ -90,10 +87,9 @@ function TvLatest() {
 
   const onBoxClicked = (tvId: number) => {
     history.push(`/tv/${tvId}`);
+    window.location.reload();
   };
-  const moreInfoClicked = (tvId: number) => {
-    history.push(`/tv/${tvId}`);
-  };
+
   const onOverlayClick = () => history.push('/tv');
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
@@ -102,8 +98,12 @@ function TvLatest() {
     <>
       <Slider>
         <SliderTitle>OnAir 시리즈</SliderTitle>
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+        <AnimatePresence
+          custom={isRight}
+          initial={false}
+          onExitComplete={toggleLeaving}>
           <Row
+            custom={isRight}
             variants={rowVariants}
             initial='hidden'
             animate='visible'
@@ -111,13 +111,14 @@ function TvLatest() {
             transition={{ type: 'tween', duration: 1 }}
             key={index}>
             {data?.results
-              .slice(1)
+
               .slice(offset * index, offset * index + offset)
               .map((tv) => (
                 <Box
                   layoutId={tv.id + ''}
                   key={tv.id}
                   variants={BoxVariants}
+                  custom={isRight}
                   initial='noraml'
                   whileHover='hover'
                   onClick={() => onBoxClicked(tv.id)}
@@ -126,10 +127,10 @@ function TvLatest() {
                   <Logo src='/img/Netflix_N_logo.svg.png' />
                 </Box>
               ))}
-            <ArrowBox_L onClick={incraseIndex}>
+            <ArrowBox_L onClick={() => incraseIndex(-1)}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </ArrowBox_L>
-            <ArrowBox_R onClick={incraseIndex}>
+            <ArrowBox_R onClick={() => incraseIndex(+1)}>
               <FontAwesomeIcon icon={faChevronRight} />
             </ArrowBox_R>
           </Row>

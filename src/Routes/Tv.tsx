@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle, faPlay } from '@fortawesome/free-solid-svg-icons';
 import TopTv from '../Components/TvSlide/TopTv';
 import AiringTv from '../Components/TvSlide/AiringTv';
-import PopTv from '../Components/TvSlide/Popular';
+import PopTv from '../Components/TvSlide/PopularTv';
 import TvLatest from '../Components/TvSlide/LatestTv';
 
 const Wrapper = styled.div`
@@ -139,16 +139,11 @@ function Tv() {
     }
   };
 
-  const onBoxClicked = (tvId: number) => {
-    history.push(`/tv/${tvId}`);
-  };
   const moreInfoClicked = (tvId: number) => {
     history.push(`/tv/${tvId}`);
+    window.location.reload();
   };
-  const onOverlayClick = () => history.push('/tv');
-  const clickedMovie =
-    bigMovieMatch?.params.movieId &&
-    data?.results.find((tv) => tv.id === +bigMovieMatch.params.movieId);
+
   return (
     <Wrapper>
       {isLoading ? (

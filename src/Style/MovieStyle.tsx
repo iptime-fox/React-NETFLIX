@@ -135,16 +135,15 @@ export const Overlay = styled(motion.div)`
 `;
 
 export const BigMovie = styled(motion.div)`
-  position: absolute;
+  position: fixed;
   width: 60vw;
   height: auto;
   background-color: black;
-
   left: 0;
   right: 0;
   margin: 0 auto;
   border-radius: 5px;
-  overflow: hidden;
+  overflow: auto;
   z-index: 100;
   @media screen and (max-width: 1400px) {
     width: 60vw;
@@ -162,6 +161,9 @@ export const BigTitleWrapper = styled.div`
   flex-direction: column;
   position: relative;
   top: -170px;
+  @media screen and (max-width: 1400px) {
+    top: -300px;
+  }
 `;
 
 export const BigTitle = styled.h3`

@@ -81,7 +81,7 @@ function NowPlayingMv() {
   return (
     <>
       <Slider>
-        <SliderTitle>개봉 예정인 영화</SliderTitle>
+        <SliderTitle>지금 상영중인 영화</SliderTitle>
         <AnimatePresence
           custom={isRight}
           initial={false}

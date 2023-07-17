@@ -68,19 +68,29 @@ function AiringTv() {
     AiringTodayTv
   );
   const [index, setIndex] = useState(0);
+  const [isRight, setIsRight] = useState(1);
   const [leaving, setLeaving] = useState(false);
-  const incraseIndex = () => {
+  const toggleLeaving = () => setLeaving((prev) => !prev);
+
+  const incraseIndex = (right: number) => {
     if (data) {
       if (leaving) return;
       toggleLeaving();
+      setIsRight(right);
       const totalTv = data.results.length - 1;
-      const maxIndex = Math.floor(totalTv / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      const maxIndex =
+        totalTv % offset === 0
+          ? Math.floor(totalTv / offset) - 1
+          : Math.floor(totalTv / offset);
+      right === 1
+        ? setIndex((prev) => (prev >= maxIndex ? 0 : prev + 1))
+        : setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
   };
-  const toggleLeaving = () => setLeaving((prev) => !prev);
+
   const onBoxClicked = (tvId: number) => {
     history.push(`/tv/${tvId}`);
+    window.location.reload();
   };
 
   const onOverlayClick = () => history.push('/tv');
@@ -91,8 +101,12 @@ function AiringTv() {
     <>
       <Slider>
         <SliderTitle>오늘 방영되는 시리즈</SliderTitle>
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+        <AnimatePresence
+          custom={isRight}
+          initial={false}
+          onExitComplete={toggleLeaving}>
           <Row
+            custom={isRight}
             variants={rowVariants}
             initial='hidden'
             animate='visible'
@@ -100,13 +114,14 @@ function AiringTv() {
             transition={{ type: 'tween', duration: 1 }}
             key={index}>
             {data?.results
-              .slice(1)
+
               .slice(offset * index, offset * index + offset)
               .map((tv) => (
                 <Box
                   layoutId={tv.id + ''}
                   key={tv.id}
                   variants={BoxVariants}
+                  custom={isRight}
                   initial='noraml'
                   whileHover='hover'
                   onClick={() => onBoxClicked(tv.id)}
@@ -115,10 +130,10 @@ function AiringTv() {
                   <Logo src='/img/Netflix_N_logo.svg.png' />
                 </Box>
               ))}
-            <ArrowBox_L onClick={incraseIndex}>
+            <ArrowBox_L onClick={() => incraseIndex(-1)}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </ArrowBox_L>
-            <ArrowBox_R onClick={incraseIndex}>
+            <ArrowBox_R onClick={() => incraseIndex(+1)}>
               <FontAwesomeIcon icon={faChevronRight} />
             </ArrowBox_R>
           </Row>
