@@ -1,20 +1,16 @@
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { motion, AnimatePresence, useScroll } from 'framer-motion';
+import { useScroll } from 'framer-motion';
 import { getTv, IGetMoviesResult } from '../api';
 import { makeImagePath } from '../utils';
 import { useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faChevronLeft,
-  faChevronRight,
-  faInfoCircle,
-  faPlay,
-  faPlus,
-  faThumbsUp,
-} from '@fortawesome/free-solid-svg-icons';
-import SimilarTv from './SimilarTv';
+import { faInfoCircle, faPlay } from '@fortawesome/free-solid-svg-icons';
+import TopTv from '../Components/TvSlide/TopTv';
+import AiringTv from '../Components/TvSlide/AiringTv';
+import PopTv from '../Components/TvSlide/Popular';
+import TvLatest from '../Components/TvSlide/LatestTv';
 
 const Wrapper = styled.div`
   background: black;
@@ -105,222 +101,44 @@ const MoreInfo = styled.div`
   }
 `;
 
-const ArrowBtn = styled(motion.div)`
-  position: absolute;
-  display: flex;
-  top: 40%;
-  z-index: 98;
-  font-size: 2.5rem;
-  opacity: 0;
-  &:hover {
-    cursor: pointer;
-    scale: 1.1;
-  }
-`;
-
-const ArrowBox_L = styled(ArrowBtn)`
-  left: -2rem;
-`;
-
-const ArrowBox_R = styled(ArrowBtn)`
-  right: -2rem;
-`;
-
-const Slider = styled.div`
-  position: relative;
-  top: -170px;
-  margin: 0px 60px;
-
-  &:hover ${ArrowBtn} {
-    opacity: 1;
-  }
-`;
-
-const Row = styled(motion.div)`
-  display: grid;
-  gap: 5px;
-  grid-template-columns: repeat(6, 1fr);
-  position: absolute;
-  width: 100%;
-`;
-
-const Box = styled(motion.div)<{ bgPhoto: string }>`
-  background-color: white;
-  height: 200px;
-  background-image: url(${(props) => props.bgPhoto});
-  background-size: cover;
-  background-position: center center;
-  border-radius: 5px;
-  &:first-child {
-    transform-origin: center left;
-  }
-  &:last-child {
-    transform-origin: center right;
-  }
-  cursor: pointer;
-  @media screen and (max-width: 1400px) {
-    height: 150px;
-  }
-`;
-
-const SliderTitle = styled.p`
-  font-size: 18px;
-  font-weight: 400;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  margin-bottom: 0.25rem;
-`;
-
-const rowVariants = {
-  hidden: {
-    x: window.outerWidth + 5,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: -window.outerWidth - 5,
-  },
-};
-
-const BoxVariants = {
-  normal: {
-    scale: 1,
-  },
-  hover: {
-    zIndex: 99,
-    scale: 1.3,
-    y: -25,
-    transition: { delay: 0.5, type: 'tween', duration: 0.3 },
-  },
-};
-
-const Logo = styled.img`
-  width: 15px;
-  position: absolute;
-  display: flex;
-  top: 10px;
-  margin-left: 10px;
-`;
-
-const Overlay = styled(motion.div)`
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 150vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
-
 const offset = 6;
 
-const BigMovie = styled(motion.div)`
-  position: absolute;
-  width: 60vw;
-  height: auto;
-  background-color: black;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  border-radius: 5px;
-  overflow: hidden;
-`;
-
-const BigCover = styled.div`
-  width: 100%;
-  background-size: cover;
-  background-position: center center;
-  height: 450px;
-`;
-
-const BigTitleWrapper = styled.div`
+const SliderWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  row-gap: 200px;
   position: relative;
-  top: -160px;
-`;
-
-const BigTitle = styled.h3`
-  color: ${(props) => props.theme.white.lighter};
-  padding: 35px;
-  padding-bottom: 10px;
-  font-size: 36px;
-  font-weight: 600;
-`;
-
-const SmallTitle = styled.h4`
-  color: #fff;
-  padding: 5px 40px 20px;
-  font-size: 20px;
-  font-weight: 600;
-`;
-
-const BigBtnWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  background-color: transparent;
-`;
-
-const BigMoreBtn = styled.div`
-  width: 40px;
-  height: 40px;
-  border: 2px solid rgba(109, 109, 110, 0.7);
-  border-radius: 20px;
-  padding: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 35px;
-  margin-right: 10px;
-  color: #ffffffd5;
-  transition: 0.4s;
-  &:hover {
-    border: 2px solid #ffffffd5;
-  }
-`;
-
-const BigOverview = styled.p`
-  color: ${(props) => props.theme.white.lighter};
-  padding: 0 40px;
-  width: 90%;
-`;
-
-const BigBtn = styled.button`
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.7);
-  border: none;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5rem 0.5rem;
-  font-size: 18px;
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  top: -170px;
 `;
 
 function Tv() {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>('/tv/:movieId');
-  const { scrollY } = useScroll();
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ['movies', 'nowPlaying'],
     getTv
   );
   const [index, setIndex] = useState(0);
+  const [isRight, setIsRight] = useState(1);
   const [leaving, setLeaving] = useState(false);
-  const incraseIndex = () => {
+  const toggleLeaving = () => setLeaving((prev) => !prev);
+
+  const incraseIndex = (right: number) => {
     if (data) {
       if (leaving) return;
       toggleLeaving();
-      const totalTv = data.results.length - 1;
-      const maxIndex = Math.floor(totalTv / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setIsRight(right);
+      const totalTv = data.results.length - 2;
+      const maxIndex =
+        totalTv % offset === 0
+          ? Math.floor(totalTv / offset) - 1
+          : Math.floor(totalTv / offset);
+      right === 1
+        ? setIndex((prev) => (prev >= maxIndex ? 0 : prev + 1))
+        : setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
   };
-  const toggleLeaving = () => setLeaving((prev) => !prev);
+
   const onBoxClicked = (tvId: number) => {
     history.push(`/tv/${tvId}`);
   };
@@ -355,117 +173,12 @@ function Tv() {
               </MoreInfo>
             </BannerBtnWrapper>
           </Banner>
-          <Slider>
-            <SliderTitle>Top20 시리즈</SliderTitle>
-            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-              <Row
-                variants={rowVariants}
-                initial='hidden'
-                animate='visible'
-                exit='exit'
-                transition={{ type: 'tween', duration: 1 }}
-                key={index}>
-                {data?.results
-                  .slice(1)
-                  .slice(offset * index, offset * index + offset)
-                  .map((tv) => (
-                    <Box
-                      layoutId={tv.id + ''}
-                      key={tv.id}
-                      variants={BoxVariants}
-                      initial='noraml'
-                      whileHover='hover'
-                      onClick={() => onBoxClicked(tv.id)}
-                      transition={{ type: 'tween' }}
-                      bgPhoto={makeImagePath(tv.backdrop_path, 'w500')}>
-                      <Logo src='/img/Netflix_N_logo.svg.png' />
-                    </Box>
-                  ))}
-                <ArrowBox_L onClick={incraseIndex}>
-                  <FontAwesomeIcon icon={faChevronLeft} />
-                </ArrowBox_L>
-                <ArrowBox_R onClick={incraseIndex}>
-                  <FontAwesomeIcon icon={faChevronRight} />
-                </ArrowBox_R>
-              </Row>
-            </AnimatePresence>
-          </Slider>
-          <AnimatePresence>
-            {bigMovieMatch ? (
-              <>
-                <Overlay
-                  onClick={onOverlayClick}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}></Overlay>
-                <BigMovie
-                  layoutId={bigMovieMatch.params.movieId}
-                  style={{ top: scrollY.get() + 30 }}>
-                  {clickedMovie && (
-                    <>
-                      <BigCover
-                        style={{
-                          backgroundImage: `linear-gradient(to top, black, transparent), URL(${makeImagePath(
-                            clickedMovie.backdrop_path,
-                            'w500'
-                          )})`,
-                        }}
-                      />
-                      <BigTitleWrapper>
-                        <BigTitle>{clickedMovie.name}</BigTitle>{' '}
-                        <SmallTitle>
-                          {clickedMovie.original_name} |{' '}
-                          {clickedMovie.first_air_date.slice(0, 4)}{' '}
-                        </SmallTitle>
-                        <BigBtnWrapper>
-                          <Play
-                            style={{
-                              margin: '10px 40px',
-                              marginRight: '10px',
-                            }}>
-                            <FontAwesomeIcon
-                              icon={faPlay}
-                              style={{ fontSize: '20px' }}
-                            />
-                            재생
-                          </Play>
-                          <BigMoreBtn>
-                            <FontAwesomeIcon
-                              icon={faPlus}
-                              style={{ fontSize: '20px' }}
-                            />
-                          </BigMoreBtn>
-                          <BigMoreBtn>
-                            <FontAwesomeIcon
-                              icon={faThumbsUp}
-                              style={{ fontSize: '16px' }}
-                            />
-                          </BigMoreBtn>
-                        </BigBtnWrapper>
-                        <SmallTitle>
-                          {[1, 2, 3, 4, 5].map((score) =>
-                            score <=
-                            Math.round(clickedMovie.vote_average / 2) ? (
-                              <span
-                                style={{ color: '#FEE501', fontSize: '20px' }}>
-                                ★
-                              </span>
-                            ) : (
-                              <span style={{ fontSize: '20px' }}>★</span>
-                            )
-                          )}{' '}
-                          {clickedMovie.vote_average}
-                        </SmallTitle>
-                        <BigOverview>{clickedMovie.overview}</BigOverview>
-                        <SimilarTv />
-                      </BigTitleWrapper>
-
-                      <BigBtn onClick={onOverlayClick}>✕</BigBtn>
-                    </>
-                  )}
-                </BigMovie>
-              </>
-            ) : null}
-          </AnimatePresence>
+          <SliderWrapper>
+            <TopTv></TopTv>
+            <AiringTv></AiringTv>
+            <PopTv></PopTv>
+            <TvLatest></TvLatest>
+          </SliderWrapper>
         </>
       )}
     </Wrapper>
