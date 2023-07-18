@@ -152,7 +152,7 @@ function Home() {
 
   const moreInfoClicked = (movieId: number) => {
     history.push(`/movies/${movieId}`);
-    window.location.reload();
+    // window.location.reload();
   };
 
   return (
