@@ -1,5 +1,4 @@
 import { useQuery } from 'react-query';
-import styled from 'styled-components';
 import { AnimatePresence, useScroll } from 'framer-motion';
 import { PopularMovie, IGetMoviesResult } from '../../api';
 import { makeImagePath } from '../../utils';
