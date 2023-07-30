@@ -146,6 +146,7 @@ export const BigMovie = styled(motion.div)`
   height: auto;
   background-color: black;
   left: 0;
+  top: 0;
   right: 0;
   margin: 0 auto;
   border-radius: 5px;
